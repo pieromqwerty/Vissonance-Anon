@@ -9,16 +9,24 @@ function Siphon() {
     var dataArray;
     var visualArray;
     var fsize = 4096; 
-    var numBands = 36;
-    var numBars = 128;
+    var numBands = 72;
+    var numBars = 256;
     var barLen = 10;
     var barGap = 8;
     
+	var lastColor = new THREE.Color();
+	var newColor = new THREE.Color();
+	var lastColorRaw;
+
+	var logged = 0;
+
     var currentBand = 0;
 
     var v = numBars * 3 * 2 * 2;
 
     var lastLoudness = 0;
+
+	var lastLoudnessa = 0;
 
     var cylinder;
     var cylRadius = 100;
@@ -53,6 +61,7 @@ function Siphon() {
             spectrum = new Spectrum();
             analyser.fftSize = fsize;
             bufferLength = analyser.frequencyBinCount;
+			//console.log(bufferLength);
             dataArray = new Uint8Array(bufferLength);
 
             view.usePerspectiveCamera();
@@ -61,7 +70,7 @@ function Siphon() {
 
             //view.renderer.autoClearColor = true;
 			
-            view.renderer.setClearColor( new THREE.Color( 0x0e1525 ), 1);
+            view.renderer.setClearColor( new THREE.Color( 'hsl(224, 28%, 16%)' ), 1);
 			//renderer.setClearColor( new THREE.Color( 'hsl( 222, 45%, 10%)' ), 1);
 			//view.renderer.setClearColor( 0x0e1525 );
 
@@ -99,12 +108,16 @@ function Siphon() {
             analyser.getByteFrequencyData( dataArray );
             visualArray = spectrum.GetVisualBins( dataArray, numBars, 4, 1300 );
             loudness = getLoudness( dataArray );
-            //smooth loudness
-            loudness = ( loudness + lastLoudness ) / 2;
+			loudnessa = getLoudness( dataArray );
+            loudnessa = ( loudnessa + lastLoudnessa ) / 2;
+			if (loudness > 0 && loudness < 60) {
+				loudness = 60;
+			}
+			//loudness = Math.floor(loudness)
+
             if( group ) {
                 group.scale.x = 1 - Math.min( loudness / 255, 0.80 );
                 group.scale.y = 1 - Math.min( loudness / 255, 0.80 );
-                
                 for( var c = 0; c < group.children.length; c++ ) {
                    group.children[c].position.z += (loudness <= 1) ? 0 : (Math.pow( (loudness / 8192) + 1, 2 ) - 1) * loudness * 4;
                    //Put plane back when out of sight
@@ -118,9 +131,10 @@ function Siphon() {
                     scaleGroupVectorLength( currentBand, (v/2 - 3) - ( (numBars*3) + (i*3) ) + (numBars*3) + (numBars*6), -visualArray[i] / 3.5 - ( loudness / 7 ) );
                     group.children[currentBand].geometry.attributes.position.needsUpdate = true;
                 }
-                setUniformColor( currentBand, loudness );
+                setUniformColorDarker( currentBand, loudnessa );
             }
             lastLoudness = loudness;
+			lastLoudnessa = loudnessa;
         }
     }
 
@@ -143,6 +157,21 @@ function Siphon() {
         view.renderer.setClearColor( new THREE.Color( 'hsl(' + ( (h + 180) % 360 ) + ', 100%, 97%)' ), 1);
     }
 
+	function setUniformColorDarker( groupI, loudness ) {
+		if (loudness == 0) {
+			lastColor = view.renderer.getClearColor( );
+			lastColorRaw = lastColor.getHSL( );
+			newColor.setHSL((lastColorRaw['h'] + (224/360))/2, (lastColorRaw['s'] + .28)/2, (lastColorRaw['l'] + .16)/2);
+			group.children[groupI].material.uniforms.col.value = new THREE.Color( 'hsl(224, 28%, 16%)' );
+
+			view.renderer.setClearColor( newColor );
+		}
+		else {
+			var h = modn( 250 - (loudness*7), 360 );
+			group.children[groupI].material.uniforms.col.value = new THREE.Color( 'hsl(' + h + ', 100%, 50%)' );
+			view.renderer.setClearColor( new THREE.Color( 'hsl(' + ( (h + 180) % 360 ) + ', 100%, 97%)' ), 1);
+		}
+    }
 
     function getLoudness( arr ) {
         var sum = 0;
@@ -153,7 +182,7 @@ function Siphon() {
     }
 
     function modn( n, m ) {
-        return ( (n % m) + m ) % m;
+		return ( (n % m) + m ) % m;
     }
 
     return siphon;

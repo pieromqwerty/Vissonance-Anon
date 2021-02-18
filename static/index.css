@@ -4,8 +4,7 @@
 }
 
 html {
-    background-color: #000000;   
-    background: radial-gradient( circle, #060606, #010101 );
+    background-color: #1D2334;
     overflow: hidden;
 }
 body {
@@ -13,7 +12,7 @@ body {
     width: 100vw;
     height: 100vh;
     font-family: ibmplexsans;
-	background-color: #000000;
+	background-color: #1D2334;
 }
 
 #title {
@@ -44,6 +43,16 @@ body {
     color: #BBB;
     text-align: center;
     font-size: 30px;
+    padding-bottom: 60px;
+}
+
+#fps {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    color: #BBB;
+    text-align: center;
+    font-size: 30px;
     padding-bottom: 30px;
 }
 
@@ -59,6 +68,11 @@ body {
     font-size: 13px;
     cursor: pointer;
 }
+
+#warningtext {
+    font-size: 13px;
+}
+
 #defaultsong:hover {
     text-decoration: underline;
 }

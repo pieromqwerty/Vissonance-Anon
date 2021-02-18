@@ -37,10 +37,17 @@ function View() {
             animate();
         },
         usePerspectiveCamera: function() {
-            view.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 2000 );
+            
+			view.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 2000 );
             view.camera.position.y = 150;
             view.camera.position.z = 500;
-        },
+			
+			/*
+			view.camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
+            view.camera.position.y = 150;
+            view.camera.position.z = 500;
+			*/
+		},
         useOrthographicCamera: function() {
             view.camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
             view.camera.position.y = 150;
@@ -62,7 +69,7 @@ function View() {
 
             requestAnimationFrame( animate );
 
-        }, 1000 / 60 );
+        }, 1000 / parseInt(document.cookie) );
         render();
     }
     function render() {

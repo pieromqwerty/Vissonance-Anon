@@ -17,6 +17,9 @@ function DragDropUpload() {
                 instructions.attr( 'id', 'instructions' );
                 instructions.append( '<div>drop an .mp3</div>' );
                 instructions.append( "<div id='defaultsong'>or play default</div>" );
+				instructions.append( "<div><br></div>" );
+				instructions.append( "<div id='warningtext'>THIS WEBSITE CONTAINS FLASHING LIGHTS</div>" );
+				instructions.append( "<div id='warningtext'>DO NOT WATCH IF YOU ARE PHOTOSENSITIVE</div>" );
             $( 'body' ).append( instructions );
 
             $( '#defaultsong' ).on( 'click', function() {

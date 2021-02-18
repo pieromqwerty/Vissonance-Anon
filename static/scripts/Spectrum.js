@@ -1,7 +1,6 @@
 function Spectrum() {
 
     var SpectrumBarCount = 64;
-   
 
     var spectrumDimensionScalar = 4.5
     var spectrumMaxExponent = 5
@@ -54,6 +53,8 @@ function Spectrum() {
                 MaxSamplePoints[i] = MaxSpot;
             }
 
+			//console.log(MaxSamplePoints);
+
             for (var i = 0; i < SpectrumBarCount; i++) {
                 var CurSpot = SamplePoints[i];
                 var NextMaxSpot = MaxSamplePoints[i];
@@ -80,6 +81,7 @@ function Spectrum() {
             var exp = spectrumMaxExponent + (spectrumMinExponent - spectrumMaxExponent) * (i/array.length);
             newArr[i] = Math.max(Math.pow(array[i] / spectrumHeight, exp) * spectrumHeight, 1);
         }
+
         return newArr;
     }
 
